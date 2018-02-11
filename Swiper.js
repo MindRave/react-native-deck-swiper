@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { PanResponder, Text, View, Dimensions, Animated } from 'react-native'
 import PropTypes from 'prop-types'
-import _ from 'lodash';
+import _ from 'lodash'
 
 import styles from './styles'
 
@@ -43,7 +43,7 @@ class Swiper extends Component {
   }
 
   componentWillReceiveProps (newProps) {
-    if(!_.isEqual(this.props.cards, newProps.cards) || this.props.cardIndex !== newProps.cardIndex) {
+    if (!_.isEqual(this.props.cards, newProps.cards) || this.props.cardIndex !== newProps.cardIndex) {
       this.setState({
         ...this.calculateCardIndexes(newProps.cardIndex, newProps.cards),
         cards: newProps.cards,
@@ -668,11 +668,15 @@ class Swiper extends Component {
       return <Animated.View />
     }
 
+    const panHandlers = this.props.horizontalSwipe && this.props.verticalSwipe
+      ? this._panResponder.panHandlers
+      : {}
+
     return (
       <Animated.View
         style={swipableCardStyle}
         key={firstCardIndex}
-        {...this._panResponder.panHandlers}
+        {...panHandlers}
       >
         {renderOverlayLabel}
         {firstCard}
