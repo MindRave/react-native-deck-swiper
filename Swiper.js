@@ -670,7 +670,7 @@ class Swiper extends Component {
       return <Animated.View />
     }
 
-    const panHandlers = this.props.horizontalSwipe && this.props.verticalSwipe
+    const panHandlers = this.props.horizontalSwipe || this.props.verticalSwipe
       ? this._panResponder.panHandlers
       : {}
 
@@ -714,7 +714,10 @@ class Swiper extends Component {
       )
     }
 
-    return renderedCards
+    return <Animated.View key={index}>
+      {null}
+      {renderCard(cards[secondCardIndex])}
+    </Animated.View>
   }
 
   renderSwipeBackCard = () => {
