@@ -33,16 +33,16 @@ npm install react-native-deck-swiper --save
 
 ### Card props
 
-| Props           | type           | description                                                          | required | default |
-| :-------------- | :------------- | :------------------------------------------------------------------- | :------- | :------ |
-| cards           | array          | array of data for the cards to be rendered                           | required |
-| renderCard      | func(cardData) | function to render the card based on the data                        | required |
-| cardIndex       | number         | cardIndex to start with                                              |          | 0       |
-| infinite        | bool           | keep swiping indefinitely                                            |          | false   |
-| horizontalSwipe | bool           | enable/disable horizontal swiping                                    |          | true    |
-| verticalSwipe   | bool           | enable/disable vertical swiping                                      |          | true    |
-| showSecondCard  | bool           | enable/disable second card while swiping                             |          | true    |
-| stackSize       | number         | number of underlaying cards to show (showSecondCard must be enabled) |          | 0       |
+| Props    | type   | description                                                                                             | required | default                          |
+|:----------|:--------|:---------------------------------------------------------------------------------------------------------|:----------------------------------|:------------|
+| cards    | array | array of data for the cards to be rendered | required |
+| renderCard    | func(cardData) | function to render the card based on the data | required |
+| keyExtractor    | func(cardData) | function to get the card's react key | null |
+| cardIndex | number | cardIndex to start with | | 0 |
+| infinite | bool | keep swiping indefinitely | | false |
+| horizontalSwipe | bool | enable/disable horizontal swiping | | true |
+| verticalSwipe | bool | enable/disable vertical swiping | | true |
+| showSecondCard | bool | enable/disable second card while swiping | | true |
 
 ### Event callbacks
 
