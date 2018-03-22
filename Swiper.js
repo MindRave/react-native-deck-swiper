@@ -702,22 +702,15 @@ class Swiper extends Component {
         const swipableCardStyle = this.calculateSwipableCardStyle();
         const renderOverlayLabel = this.renderOverlayLabel();
 
-        renderedCards.push(firstCard ?
-          <Animated.View
-            key={key}
-            style={swipableCardStyle}
-            {...this._panResponder.panHandlers}
-          >
-            {renderOverlayLabel}
-            {stackCard}
-          </Animated.View>
-          :
-          <Animated.View key={key} style={stackCardZoomStyle}>
-            {stackCard}
-          </Animated.View>
-        )
-
-        firstCard = false
+        renderedCards.push(<Animated.View
+          key={key}
+          style={firstCard ? swipableCardStyle : stackCardZoomStyle}
+          {...this._panResponder.panHandlers}
+        >
+          {firstCard ? renderOverlayLabel : null}
+          {stackCard}
+        </Animated.View>);
+        firstCard=false;
       }
     }
 
