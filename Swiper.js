@@ -33,27 +33,32 @@ class Swiper extends Component {
     this.initializeStack()
   }
 
-  initializeStack () {
+  shouldComponentUpdate(nextProps){
+    return (
+      !_.isEqual(this.props.cards, nextProps.cards) ||
+      this.props.cardIndex !== nextProps.cardIndex
+    );
+  }
+
+  initializeStack() {
     this.props.cards.forEach((card, index) => {
       const factor = index < this.props.stackSize ? index : this.props.stackSize
 
-      this.state[`stackPosition${index}`] = new Animated.Value(this.props.stackSeparation * factor)
-      this.state[`stackScale${index}`] = new Animated.Value((100 - this.props.stackScale * factor) * 0.01)
-    })
+      this.state[`stackPosition${index}`] = new Animated.Value(this.props.stackSeparation * factor);
+      this.state[`stackScale${index}`] = new Animated.Value((100 - this.props.stackScale * factor) * 0.01);
+    });
   }
 
   componentWillReceiveProps (newProps) {
-    if (!_.isEqual(this.props.cards, newProps.cards) || this.props.cardIndex !== newProps.cardIndex) {
-      this.setState({
-        ...this.calculateCardIndexes(newProps.cardIndex, newProps.cards),
-        cards: newProps.cards,
-        previousCardX: new Animated.Value(newProps.previousCardInitialPositionX),
-        previousCardY: new Animated.Value(newProps.previousCardInitialPositionY),
-        swipedAllCards: false,
-        panResponderLocked: newProps.cards && newProps.cards.length === 0,
-        slideGesture: false
-      })
-    }
+    this.setState({
+      ...this.calculateCardIndexes(newProps.cardIndex, newProps.cards),
+      cards: newProps.cards,
+      previousCardX: new Animated.Value(newProps.previousCardInitialPositionX),
+      previousCardY: new Animated.Value(newProps.previousCardInitialPositionY),
+      swipedAllCards: false,
+      panResponderLocked: newProps.cards && newProps.cards.length === 0,
+      slideGesture: false
+    })
   }
 
   calculateCardIndexes = (firstCardIndex, cards) => {
@@ -559,8 +564,8 @@ class Swiper extends Component {
       zIndex: index * -1,
       transform: [{ scale: this.state[`stackScale${index}`] }, { translateY: this.state[`stackPosition${index}`] }]
     },
-    this.customCardStyle
-  ]
+    this.customCardStyle,
+  ];
 
   calculateSwipeBackCardStyle = () => [
     styles.card,
