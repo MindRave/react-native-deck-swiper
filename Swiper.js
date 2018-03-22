@@ -646,8 +646,7 @@ class Swiper extends Component {
         ]}
       >
         {this.renderChildren()}
-        {this.renderFirstCard()}
-        {this.props.showSecondCard ? this.renderStack() : null}
+        {this.renderStack()}
         {this.props.swipeBackCard ? this.renderSwipeBackCard() : null}
       </View>
     )
@@ -678,61 +677,48 @@ class Swiper extends Component {
     return cardIndex
   }
 
-  renderFirstCard = () => {
-    const { firstCardIndex, generatedCards } = this.state
-    const { cards } = this.props
-
-    const swipableCardStyle = this.calculateSwipableCardStyle()
-    const firstCardContent = cards[firstCardIndex]
-    const firstCard = generatedCards[firstCardIndex];
-    const renderOverlayLabel = this.renderOverlayLabel()
-
-    const notInfinite = !this.props.infinite
-    if (notInfinite && this.state.swipedAllCards) {
-      return <Animated.View />
-    }
-
-    const panHandlers = this.props.horizontalSwipe || this.props.verticalSwipe
-      ? this._panResponder.panHandlers
-      : {}
-
-    return (
-      <Animated.View
-        style={swipableCardStyle}
-        key={this.getCardKey(firstCardContent, firstCardIndex)}
-        {...panHandlers}
-      >
-        {renderOverlayLabel}
-        {firstCard}
-      </Animated.View>
-    )
-  }
-
   renderStack = () => {
-    const { secondCardIndex, generatedCards } = this.state;
-    const { cards, stackSize } = this.props;
-
-    let renderedCards = [];
-
-    let renderedCards = []
+    const { firstCardIndex, generatedCards } = this.state;
+    const { cards, stackSize, showSecondCard } = this.props;
+    const renderedCards = [];
+    const stackCount = cards.length - firstCardIndex;
+    const notInfinite = !this.props.infinite;
+    let firstCard = true;
 
     let index; let renderedStackSize;
-    for (index=secondCardIndex, renderedStackSize=0; index < cards.length && renderedStackSize < stackSize; index+=1, renderedStackSize+=1) {
-      const stackCardZoomStyle = this.calculateStackCardZoomStyle(index);
-      const stackCard = generatedCards[index];
-
-      const notInfinite = !this.props.infinite;
-      const lastCardOrSwipedAllCards = stackCount === 1 || this.state.swipedAllCards;
-      const key = this.getCardKey(cards[index], index)
+    for (
+      index=firstCardIndex, renderedStackSize=0;
+      (showSecondCard && index < cards.length && renderedStackSize < stackSize) ||
+      (showSecondCard===false && firstCard);
+      index+=1, renderedStackSize+=1
+    ) {
+      const lastCardOrSwipedAllCards = stackCount === 0 || this.state.swipedAllCards;
+      const key = this.getCardKey(cards[index], index);
       if (notInfinite && lastCardOrSwipedAllCards) {
         return <Animated.View key={key} />;
-      }
+      } else {
+        const stackCardZoomStyle = this.calculateStackCardZoomStyle(index);
+        const stackCard = generatedCards[index];
+        const swipableCardStyle = this.calculateSwipableCardStyle();
+        const renderOverlayLabel = this.renderOverlayLabel();
 
-      renderedCards.push(
-        <Animated.View key={key} style={stackCardZoomStyle}>
-          {stackCard}
-        </Animated.View>
-      )
+        renderedCards.push(firstCard ?
+          <Animated.View
+            key={key}
+            style={swipableCardStyle}
+            {...this._panResponder.panHandlers}
+          >
+            {renderOverlayLabel}
+            {stackCard}
+          </Animated.View>
+          :
+          <Animated.View key={key} style={stackCardZoomStyle}>
+            {stackCard}
+          </Animated.View>
+        )
+
+        firstCard = false
+      }
     }
 
     return renderedCards;
