@@ -256,7 +256,6 @@ class Swiper extends Component {
 
       this.setState({ panResponderLocked: true }, () => {
         this.swipeCard(onSwipeDirectionCallback)
-        this.animateStack()
       })
     } else {
       this.resetTopCard()
@@ -355,8 +354,6 @@ class Swiper extends Component {
   }
 
   swipeLeft = (mustDecrementCardIndex = false) => {
-    this.animateStack()
-
     this.swipeCard(
       this.props.onSwipedLeft,
       -this.props.horizontalThreshold,
@@ -366,8 +363,6 @@ class Swiper extends Component {
   }
 
   swipeRight = (mustDecrementCardIndex = false) => {
-    this.animateStack()
-
     this.swipeCard(
       this.props.onSwipedRight,
       this.props.horizontalThreshold,
@@ -377,8 +372,6 @@ class Swiper extends Component {
   }
 
   swipeTop = (mustDecrementCardIndex = false) => {
-    this.animateStack()
-
     this.swipeCard(
       this.props.onSwipedTop,
       0,
@@ -388,8 +381,6 @@ class Swiper extends Component {
   }
 
   swipeBottom = (mustDecrementCardIndex = false) => {
-    this.animateStack()
-
     this.swipeCard(
       this.props.onSwipedBottom,
       0,
@@ -404,6 +395,7 @@ class Swiper extends Component {
     y = this._animatedValueY,
     mustDecrementCardIndex = false
   ) => {
+    this.animateStack()
     Animated.timing(this.state.pan, {
       toValue: {
         x: x * 4.5,
