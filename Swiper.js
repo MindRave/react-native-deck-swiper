@@ -710,13 +710,14 @@ class Swiper extends Component {
 
   renderStack = () => {
     const { secondCardIndex, generatedCards } = this.state;
-    const { cards } = this.props;
+    const { cards, stackSize } = this.props;
 
     let renderedCards = [];
 
     let renderedCards = []
 
-    for (var index = secondCardIndex; index < cards.length; index++) {
+    let index; let renderedStackSize;
+    for (index=secondCardIndex, renderedStackSize=0; index < cards.length && renderedStackSize < stackSize; index+=1, renderedStackSize+=1) {
       const stackCardZoomStyle = this.calculateStackCardZoomStyle(index);
       const stackCard = generatedCards[index];
 
@@ -731,15 +732,11 @@ class Swiper extends Component {
         <Animated.View key={key} style={stackCardZoomStyle}>
           {stackCard}
         </Animated.View>
-      );
+      )
     }
 
-    return (
-      <Animated.View key={key} style={secondCardZoomStyle}>
-        {secondCard}
-      </Animated.View>
-    )
-  }
+    return renderedCards;
+  };
 
   renderSwipeBackCard = () => {
     const { previousCardIndex, generatedCards } = this.state
