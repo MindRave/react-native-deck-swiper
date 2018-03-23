@@ -30,7 +30,18 @@ class Swiper extends Component {
       slideGesture: false
     }
 
-    this.initializeStack()
+  shouldComponentUpdate = (nextProps, nextState) => {
+    const { props, state } = this;
+    const propsChanged = (
+      !_.isEqual(props.cards, nextProps.cards) ||
+      props.cardIndex !== nextProps.cardIndex
+    );
+    const stateChanged = (
+      nextState.firstCardIndex !== state.firstCardIndex ||
+      nextState.secondCardIndex !== state.secondCardIndex ||
+      nextState.previousCardIndex !== state.previousCardIndex
+    );
+    return propsChanged || stateChanged;
   }
 
   initializeStack() {
@@ -459,7 +470,7 @@ class Swiper extends Component {
       newCardIndex = 0
       swipedAllCards = true
     }
-
+    console.log('inc', newCardIndex);
     this.onSwipedCallbacks(onSwiped, swipedAllCards)
     this.setCardIndex(newCardIndex, swipedAllCards)
   }
@@ -474,6 +485,7 @@ class Swiper extends Component {
 
     const swipedAllCards = false
     this.onSwipedCallbacks(cb, swipedAllCards)
+    console.log('dind', newCardIndex);
     this.setCardIndex(newCardIndex, swipedAllCards)
   }
 
@@ -666,51 +678,47 @@ class Swiper extends Component {
     return cardIndex
   }
 
-  renderFirstCard = () => {
-    const { firstCardIndex } = this.state
-    const { cards } = this.props
+  pushCardToStack(renderedCards, index, key, firstCard){
+    const { generatedCards } = this.state;
+    const stackCardZoomStyle = this.calculateStackCardZoomStyle(index);
+    const stackCard = generatedCards[index];
+    const swipableCardStyle = this.calculateSwipableCardStyle();
+    const renderOverlayLabel = this.renderOverlayLabel();
 
-    const swipableCardStyle = this.calculateSwipableCardStyle()
-    const firstCardContent = cards[firstCardIndex]
-    const firstCard = this.props.renderCard(firstCardContent)
-    const renderOverlayLabel = this.renderOverlayLabel()
-
-    const notInfinite = !this.props.infinite
-    if (notInfinite && this.state.swipedAllCards) {
-      return <Animated.View />
-    }
-
-    return (
+    renderedCards.push(
       <Animated.View
-        style={swipableCardStyle}
-        key={this.getCardKey(firstCardContent, firstCardIndex)}
+        key={key}
+        style={firstCard ? swipableCardStyle : stackCardZoomStyle}
         {...this._panResponder.panHandlers}
       >
-        {renderOverlayLabel}
-        {firstCard}
+        {firstCard ? renderOverlayLabel : null}
+        {stackCard}
       </Animated.View>
-    )
+    );
   }
 
   renderStack = () => {
-    const { secondCardIndex } = this.state;
-    const { cards, renderCard } = this.props;
+    const { firstCardIndex } = this.state;
+    const { cards, stackSize, showSecondCard } = this.props;
+    const renderedCards = [];
+    const stackCount = cards.length - firstCardIndex;
+    const notInfinite = !this.props.infinite;
+    let firstCard = true;
 
-    let renderedCards = [];
-
-    let stackCount = 1;
-    if (secondCardIndex > 0) stackCount = cards.length - secondCardIndex + 1;
-
-    for (var index = secondCardIndex; index < cards.length; index++) {
-      const stackCardZoomStyle = this.calculateStackCardZoomStyle(index);
-      const stackCardContent = cards[index];
-      const stackCard = renderCard(stackCardContent);
-
-      const notInfinite = !this.props.infinite;
-      const lastCardOrSwipedAllCards = stackCount === 1 || this.state.swipedAllCards;
-      const key = this.getCardKey(stackCardContent, index)
+    let index; let renderedStackSize;
+    for (
+      index=firstCardIndex, renderedStackSize=0;
+      (showSecondCard && index < cards.length && renderedStackSize < stackSize) ||
+      (showSecondCard===false && firstCard);
+      index+=1, renderedStackSize+=1
+    ) {
+      const lastCardOrSwipedAllCards = stackCount === 0 || this.state.swipedAllCards;
+      const key = this.getCardKey(cards[index], index);
       if (notInfinite && lastCardOrSwipedAllCards) {
         return <Animated.View key={key} />;
+      } else {
+        this.pushCardToStack(renderedCards, index, key, firstCard);
+        firstCard=false;
       }
 
       renderedCards.push(
