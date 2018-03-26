@@ -973,7 +973,7 @@ Swiper.defaultProps = {
   goBackToPreviousCardOnSwipeBottom: false,
   stackSeparation: 10,
   stackScale: 3,
-  stackSize: 0,
+  stackSize: 1,
   stackAnimationFriction: 7,
   stackAnimationTension: 40,
   keyExtractor: null
