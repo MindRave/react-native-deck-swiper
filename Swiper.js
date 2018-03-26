@@ -30,6 +30,9 @@ class Swiper extends Component {
       slideGesture: false
     }
 
+    this.initializeStack();
+  }
+
   shouldComponentUpdate = (nextProps, nextState) => {
     const { props, state } = this;
     const propsChanged = (
@@ -53,18 +56,16 @@ class Swiper extends Component {
     });    
   }
 
-  componentWillReceiveProps (newProps) {
-    if(!_.isEqual(this.props.cards, newProps.cards) || this.props.cardIndex !== newProps.cardIndex) {
-      this.setState({
-        ...this.calculateCardIndexes(newProps.cardIndex, newProps.cards),
-        cards: newProps.cards,
-        previousCardX: new Animated.Value(newProps.previousCardInitialPositionX),
-        previousCardY: new Animated.Value(newProps.previousCardInitialPositionY),
-        swipedAllCards: false,
-        panResponderLocked: newProps.cards && newProps.cards.length === 0,
-        slideGesture: false
-      })
-    }
+  componentWillReceiveProps = (newProps) => {
+    this.setState({
+      ...this.calculateCardIndexes(newProps.cardIndex, newProps.cards),
+      cards: newProps.cards,
+      previousCardX: new Animated.Value(newProps.previousCardInitialPositionX),
+      previousCardY: new Animated.Value(newProps.previousCardInitialPositionY),
+      swipedAllCards: false,
+      panResponderLocked: newProps.cards && newProps.cards.length === 0,
+      slideGesture: false
+    });
   }
 
   calculateCardIndexes = (firstCardIndex, cards) => {
@@ -679,9 +680,9 @@ class Swiper extends Component {
   }
 
   pushCardToStack(renderedCards, index, key, firstCard){
-    const { generatedCards } = this.state;
+    const { cards } = this.props;
     const stackCardZoomStyle = this.calculateStackCardZoomStyle(index);
-    const stackCard = generatedCards[index];
+    const stackCard = this.props.renderCard(cards[index]);
     const swipableCardStyle = this.calculateSwipableCardStyle();
     const renderOverlayLabel = this.renderOverlayLabel();
 
@@ -737,12 +738,8 @@ class Swiper extends Component {
     const { cards } = this.props
     const previousCardContent = cards[previousCardIndex]
     const previousCardStyle = this.calculateSwipeBackCardStyle()
-    const previousCard = this.props.renderCard(previousCardContent)
-    const key = this.getCardKey(previousCardContent, previousCardIndex)
-
-    if (notInfinite && lastCardOrSwipedAllCards) {
-      return <Animated.View key={key} />
-    }
+    const previousCard = this.props.renderCard(cards[previousCardIndex]);
+    const key = this.getCardKey(cards[previousCardIndex], previousCardIndex)
 
     return (
       <Animated.View key={key} style={previousCardStyle}>
