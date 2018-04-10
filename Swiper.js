@@ -38,7 +38,7 @@ class Swiper extends Component {
     this.props.cards.forEach((card, index) => {
       const factor = index < this.props.stackSize ? index : this.props.stackSize
 
-      this.state[`stackPosition${index}`] = new Animated.Value(this.props.stackSeparation * factor)
+      // this.state[`stackPosition${index}`] = new Animated.Value(this.props.stackSeparation * factor)
       this.state[`stackScale${index}`] = new Animated.Value(
         (100 - this.props.stackScale * factor) * 0.01,
       )
@@ -60,6 +60,21 @@ class Swiper extends Component {
         slideGesture: false,
       })
     }
+  }
+
+  shouldComponentUpdate = (nextProps, nextState) => {
+    const { props, state } = this;
+    const propsChanged = (
+      !_.isEqual(props.cards, nextProps.cards) ||
+      props.cardIndex !== nextProps.cardIndex
+    );
+    const stateChanged = (
+      nextState.firstCardIndex !== state.firstCardIndex ||
+      nextState.secondCardIndex !== state.secondCardIndex ||
+      nextState.previousCardIndex !== state.previousCardIndex ||
+      nextState.labelType !== state.labelType
+    );
+    return propsChanged || stateChanged;
   }
 
   calculateCardIndexes = (firstCardIndex, cards) => {
@@ -405,13 +420,13 @@ class Swiper extends Component {
     let cardPosition = 0
 
     for (var index = secondCardIndex; index <= lastCardIndex; index++) {
-      const newSeparation = this.props.stackSeparation * cardPosition
-      Animated.spring(this.state[`stackPosition${index}`], {
-        toValue: newSeparation,
-        friction: this.props.stackAnimationFriction,
-        tension: this.props.stackAnimationTension,
-        useNativeDriver: true,
-      }).start()
+      // const newSeparation = this.props.stackSeparation * cardPosition
+      // Animated.spring(this.state[`stackPosition${index}`], {
+      //   toValue: newSeparation,
+      //   friction: this.props.stackAnimationFriction,
+      //   tension: this.props.stackAnimationTension,
+      //   useNativeDriver: true,
+      // }).start()
 
       const newScale = (100 - this.props.stackScale * cardPosition) * 0.01
       Animated.spring(this.state[`stackScale${index}`], {
@@ -531,7 +546,7 @@ class Swiper extends Component {
       zIndex: index * -1,
       transform: [
         { scale: this.state[`stackScale${index}`] },
-        { translateY: this.state[`stackPosition${index}`] },
+        // { translateY: this.state[`stackPosition${index}`] },
       ],
     },
     this.customCardStyle,
