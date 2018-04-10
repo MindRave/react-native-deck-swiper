@@ -624,7 +624,6 @@ class Swiper extends Component {
         ]}
       >
         {this.renderChildren()}
-        {this.renderFirstCard()}
         {this.props.showSecondCard ? this.renderStack() : null}
         {this.props.swipeBackCard ? this.renderSwipeBackCard() : null}
       </View>
@@ -640,31 +639,6 @@ class Swiper extends Component {
     }
 
     return <View style={[styles.childrenViewStyle, { zIndex: zIndex }]}>{children}</View>
-  }
-
-  renderFirstCard = () => {
-    const { firstCardIndex } = this.state
-    const { cards } = this.props
-
-    const swipableCardStyle = this.calculateSwipableCardStyle()
-    const firstCardContent = cards[firstCardIndex]
-    const firstCard = this.props.renderCard(firstCardContent)
-    const renderOverlayLabel = this.renderOverlayLabel()
-
-    const notInfinite = !this.props.infinite
-    if (notInfinite && this.state.swipedAllCards) {
-      return <Animated.View />
-    }
-
-    const panHandlers =
-      this.props.horizontalSwipe || this.props.verticalSwipe ? this._panResponder.panHandlers : {}
-
-    return (
-      <Animated.View style={swipableCardStyle} key={firstCardIndex} {...panHandlers}>
-        {renderOverlayLabel}
-        {firstCard}
-      </Animated.View>
-    )
   }
 
   getCardKey = (cardContent, cardIndex) => {
